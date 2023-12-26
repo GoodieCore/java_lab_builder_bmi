@@ -6,58 +6,70 @@
 - По сравнению с другими подобными продуктами, данная разработка отличается понятным кодом и удобным интерфейсом.
 **Скриншот рабочего окна приложения:**
 ----------------------------------------
- ![image](https://github.com/StephanKomov/java_task01/blob/master/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202023-12-26%20115829.jpg)
+ ![image](https://github.com/GoodieCore/java_lab_builder_bmi/blob/master/Director_img_1.JPG)
 
- **Разбор части кода на примере класса BMI**
+ **Разбор части кода на примере класса BMIController**
 ```
-public class HelloController {
-    @FXML
-    public Label labelIMT;
-    private final Imt_class bmi = new Imt_class();
-    public TextField massa;
-    public TextField rost;
-    public Label imt;
-    public Button butto;
-    public Indicator indicator;
-    public boolean indOk = false;
-    public HBox colorbox;
+package com.example.java_lab_builder_bmi.controllers;
 
+import com.example.java_lab_builder_bmi.builder.Director;
+import com.example.java_lab_builder_bmi.builder.Indicator;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 
-    public void onHelloButtonClick(ActionEvent actionEvent) {
-        if (indOk) indicator.remove(colorbox);
-        indOk = true;
-        Director director = new Director();
-        bmi.setMass_p(massa.getText());
-        bmi.setRost_p(rost.getText());
-        Color color;
-        if (bmi.getImt() < 16) color = Color.RED;
-        else if (bmi.getImt() <= 18.5) color = Color.YELLOW;
-        else if (bmi.getImt() <= 25) color = Color.GREEN;
-        else if (bmi.getImt() <= 30) color = Color.YELLOW;
-        else color = Color.RED;
-        indicator = new Indicator();
-        double flag = (int) bmi.getImt() * 10.4;
-        if (flag > 530) {
-            flag = 525;
+public class BMIController {
+    Indicator ind;
+    public Button onClick;
+    public TextField txt1,txt2;
+    public boolean indOK = false;
+    public HBox panel;
+    public void calculateBMI() {
+        if(indOK) {
+            ind.remove(panel);
         }
+        indOK = true;
+        /*
+        !!!
+         */
+        Director dir = new Director();
+        double height = Double.parseDouble(txt1.getText());
+        double weight = Double.parseDouble(txt2.getText());
+        double result = weight/height/height*10000;
+        double curValue = (Math.min((int) result, 40)) * 3;
+        String format = String.format("%.1f",result);
 
-        indicator = director.construct(color, flag, getMessageBasedOnIMT(bmi.getImt()));
-        indicator.show(colorbox);
+        if(result<16.5) {
+            ind = dir.Constr(Color.YELLOW,"Худощавость",format, curValue);
+            ind.show(panel);
+        } else if (result >= 16 && result < 18.5) {
+            ind = dir.Constr(Color.ORANGE,"Недостаток веса", format,curValue);
+            ind.show(panel);
 
-        imt.setText(String.valueOf(bmi.getImt()));
+        } else if (result >= 18.5 && result < 25) {
+            ind = dir.Constr(Color.GREEN,"Нормальный вес", format,curValue);
+            ind.show(panel);
 
-        String message = getMessageBasedOnIMT(bmi.getImt());
-        labelIMT.setText(message);
+        } else if (result >= 25 && result < 30) {
+            ind = dir.Constr(Color.PINK,"Избыток веса",format, curValue);
+            ind.show(panel);
+
+        } else if (result >= 30) {
+            ind = dir.Constr(Color.RED,"Ожирение", format, curValue);
+            ind.show(panel);
+
+        }
     }
 
-    private String getMessageBasedOnIMT(double imt) {
-        String message = "";
-        if (imt < 16) message = "Значительный дефицит массы тела";
-        else if (imt <= 18.5) message = "Дефицит массы тела";
-        else if (imt <= 25) message = "Норма";
-        else if (imt <= 30) message = "Лишний вес";
-        else message = "Ожирение";
-        return message;
+    public void onClick(){
+        try {
+            calculateBMI();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 ```
@@ -66,11 +78,11 @@ public class HelloController {
 ## Архитектура
 Диаграмма классов:
 
- ![image](https://github.com/StephanKomov/java_task01/blob/master/2.jpg)
+ ![image](https://github.com/GoodieCore/java_lab_builder_bmi/blob/master/Director_img_2.JPG)
 
 
 ## Завсимости
-Для работы данного приложежния необходимы JavaFX и JDK 20.
+Для работы данного приложежния необходимы JavaFX и JDK 21.
 
 ## Установка
 Не требуется. Достаточно запустить проект через любую доступную среду разработки JAVA.
@@ -85,7 +97,7 @@ public class HelloController {
 2. Рост в см
 С помощью этих значений, формула **bmi = M/H^2** рассчитывает индекс массы тела. 
 Полученый результат сверяеться с данными рисунка ниже и на основании этого пишет вывод.
- ![image](https://rgb6.medgis.ru/uploads/3c/bf/d1/dd/3cbfd1dd909dae37fa3d1b6248c2b520de7a46e9.jpg)
+ ![image](https://github.com/GoodieCore/java_lab_builder_bmi/blob/master/Director_img_3.jpg)
 
 
 ## Проверка ПО
@@ -95,7 +107,7 @@ public class HelloController {
 Индекс массы тела может считаться только по одной формуле 
 
 ## Получение справочной информации
-По всем вопрсам можно обратиться в [ВК](https://vk.com/id484742584) разработчика  
+По всем вопрсам можно обратиться в [ВК](https://vk.com/iayiwer) разработчика  
 
 ## Приглашение к сотрудничеству 
 В дальнейшем предполагается переработка кода для улучшения имеющийся программы 
